@@ -33,7 +33,12 @@ public class ControleFinanceiro {
     public void listarTransacoes() {
         for (Transacao t : transacoes) {
             System.out.println(
-                t.getTipo() + " | " + t.getValor()
+               "ID: " + t.getId() +
+               " | Descrição: " + t.getDescricao() +
+               " | Valor: " + t.getValor() +
+               " | Tipo: " + t.getTipo() +
+               " | Data: " + t.getData()
+
             );
         }
     }

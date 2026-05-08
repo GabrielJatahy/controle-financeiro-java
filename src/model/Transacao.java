@@ -23,6 +23,18 @@ public class Transacao {
    public double getValor() {
     return valor;
    } 
+
+    public int getId() {
+    return id;
+}
+
+public String getDescricao() {
+    return descricao;
+}
+
+public LocalDate getData() {
+    return data;
+}
    
 }
 

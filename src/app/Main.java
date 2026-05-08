@@ -19,6 +19,7 @@ public class Main {
       System.out.println("1 - Adicionar transação");
       System.out.println("2 - Ver saldo");
       System.out.println("3 - Listar transações");
+      System.out.println("4 - Remover Transação");
       System.out.println("0 - Sair");
 
       opcao = sc.nextInt();
@@ -29,10 +30,6 @@ public class Main {
       }
 
       if (opcao == 1) {
-
-        System.out.print("ID: ");
-        int id = sc.nextInt();
-        sc.nextLine();
 
         System.out.print("Descrição: ");
         String descricao = sc.nextLine();
@@ -45,7 +42,7 @@ public class Main {
 
         TipoTransacao tipo = TipoTransacao.valueOf(tipoStr.toUpperCase());
 
-        Transacao t = new Transacao(id, descricao, valor, tipo, LocalDate.now());
+        Transacao t = new Transacao(controle.gerarId(), descricao, valor, tipo, LocalDate.now());
         controle.adicionarTransacao(t);
         controle.salvarTransacoes();
 
@@ -60,8 +57,17 @@ public class Main {
       if (opcao == 3) {
         controle.listarTransacoes();
       }
-    }
 
+      if (opcao == 4) {
+        System.out.print("Digite o ID da transação a remover: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        controle.removerTransacao(id);
+
+        System.out.println("Transação removida!");
+      }
+    }
     sc.close();
   }
 }

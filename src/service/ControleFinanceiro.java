@@ -7,6 +7,7 @@ import model.Transacao;
 
 public class ControleFinanceiro {
 
+    private int proximoId = 1;
     private ArrayList<Transacao> transacoes;
 
     public ControleFinanceiro() {
@@ -34,35 +35,49 @@ public class ControleFinanceiro {
     public void listarTransacoes() {
         for (Transacao t : transacoes) {
             System.out.println(
-                t.getId() + ";"
-               + t.getDescricao() + ";"
-              + t.getValor() + ";"
-               + t.getTipo() + ";"
-                + t.getData() + "\n"
-                
+                t.getId() + " | " +
+                t.getDescricao() + " | " +
+                t.getValor() + " | " +
+                t.getTipo() + " | " +
+                t.getData()
             );
         }
     }
+
     public void salvarTransacoes() {
 
-    try {
+        try {
+            FileWriter writer = new FileWriter("transacoes.txt");
 
-        FileWriter writer = new FileWriter("transacoes.txt");
-        for (Transacao t : transacoes){
-            writer.write( "ID: " + t.getId() +
-               " | Descrição: " + t.getDescricao() +
-               " | Valor: " + t.getValor() +
-               " | Tipo: " + t.getTipo() +
-               " | Data: " + t.getData() + "\n");
+            for (Transacao t : transacoes) {
+                writer.write(
+                    t.getId() + ";" +
+                    t.getDescricao() + ";" +
+                    t.getValor() + ";" +
+                    t.getTipo() + ";" +
+                    t.getData() + "\n"
+                );
+            }
+
+            writer.close();
+
+        } catch (Exception e) {
+            System.out.println("Erro ao salvar arquivo");
         }
-        writer.close();
-
-    } catch (Exception e) {
-
-        System.out.println("Erro ao salvar arquivo");
-
     }
 
-    
-}
+    public int gerarId() {
+        return proximoId++;
+    }
+
+    public void removerTransacao(int id) {
+        for (int i = 0; i < transacoes.size(); i++){
+            Transacao t = transacoes.get(i);
+
+            if(t.getId() == id){
+                transacoes.remove(i);
+                break;
+            }
+        }
+    }
 }

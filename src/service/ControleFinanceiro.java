@@ -1,6 +1,9 @@
 package service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import model.TipoTransacao;
 import model.Transacao;
@@ -80,4 +83,38 @@ public class ControleFinanceiro {
             }
         }
     }
+
+    public void carregarTransacoes() {
+
+    try {
+        BufferedReader reader = new BufferedReader(new FileReader("transacoes.txt"));
+
+        String linha;
+
+        while ((linha = reader.readLine()) != null) {
+
+            String[] dados = linha.split(";");
+
+            int id = Integer.parseInt(dados[0]);
+            String descricao = dados[1];
+            double valor = Double.parseDouble(dados[2]);
+            TipoTransacao tipo = TipoTransacao.valueOf(dados[3]);
+            LocalDate data = LocalDate.parse(dados[4]);
+
+            Transacao t = new Transacao(id, descricao, valor, tipo, data);
+
+            transacoes.add(t);
+        }
+
+        reader.close();
+
+    } catch (Exception e) {
+        System.out.println("Erro ao carregar transações");
+    }
+    for (Transacao t : transacoes) {
+    if (t.getId() >= proximoId) {
+        proximoId = t.getId() + 1;
+    }
+}
+}
 }

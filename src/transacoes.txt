@@ -1,0 +1,2 @@
+ID: 1 | Descrição: salario | Valor: 2580.0 | Tipo: ENTRADA | Data: 2026-05-08
+ID: 2 | Descrição: Mercado | Valor: 500.0 | Tipo: SAIDA | Data: 2026-05-08

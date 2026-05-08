@@ -47,6 +47,7 @@ public class Main {
 
         Transacao t = new Transacao(id, descricao, valor, tipo, LocalDate.now());
         controle.adicionarTransacao(t);
+        controle.salvarTransacoes();
 
         System.out.println("Transação adicionada!");
       }

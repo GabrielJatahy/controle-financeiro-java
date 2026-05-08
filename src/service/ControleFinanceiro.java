@@ -1,5 +1,6 @@
 package service;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import model.TipoTransacao;
 import model.Transacao;
@@ -33,13 +34,35 @@ public class ControleFinanceiro {
     public void listarTransacoes() {
         for (Transacao t : transacoes) {
             System.out.println(
-               "ID: " + t.getId() +
-               " | Descrição: " + t.getDescricao() +
-               " | Valor: " + t.getValor() +
-               " | Tipo: " + t.getTipo() +
-               " | Data: " + t.getData()
-
+                t.getId() + ";"
+               + t.getDescricao() + ";"
+              + t.getValor() + ";"
+               + t.getTipo() + ";"
+                + t.getData() + "\n"
+                
             );
         }
     }
+    public void salvarTransacoes() {
+
+    try {
+
+        FileWriter writer = new FileWriter("transacoes.txt");
+        for (Transacao t : transacoes){
+            writer.write( "ID: " + t.getId() +
+               " | Descrição: " + t.getDescricao() +
+               " | Valor: " + t.getValor() +
+               " | Tipo: " + t.getTipo() +
+               " | Data: " + t.getData() + "\n");
+        }
+        writer.close();
+
+    } catch (Exception e) {
+
+        System.out.println("Erro ao salvar arquivo");
+
+    }
+
+    
+}
 }

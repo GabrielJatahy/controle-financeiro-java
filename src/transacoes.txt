@@ -1,2 +1,0 @@
-1;salario;2000.0;ENTRADA;2026-05-08
-3;mercado;500.0;SAIDA;2026-05-08

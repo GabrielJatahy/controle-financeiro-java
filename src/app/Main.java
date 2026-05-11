@@ -8,6 +8,7 @@ import service.ControleFinanceiro;
 
 public class Main {
     public static void main(String[] args) {
+       new ControleFinanceiroGUI();
 
         ControleFinanceiro controle = new ControleFinanceiro();
         controle.carregarTransacoes();
@@ -79,7 +80,7 @@ public class Main {
                 int id = sc.nextInt();
                 sc.nextLine();
 
-                controle.removerTransacao(id);
+                controle.ocultarTransacao(id);
 
                 System.out.println("Transacao removida!");
             }

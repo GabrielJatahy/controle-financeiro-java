@@ -17,7 +17,7 @@ public class ControleFinanceiro {
         this.transacoes = new ArrayList<>();
     }
 
-    public void adicionarTransacao(Transacao transacao){
+    public void adicionarTransacao(Transacao transacao) {
         this.transacoes.add(transacao);
     }
 
@@ -38,14 +38,19 @@ public class ControleFinanceiro {
     public void listarTransacoes() {
         for (Transacao t : transacoes) {
             System.out.println(
-                t.getId() + " | " +
-                t.getDescricao() + " | " +
-                t.getValor() + " | " +
-                t.getTipo() + " | " +
-                t.getData()
+                    t.getId() + " | " +
+                    t.getDescricao() + " | " +
+                    t.getValor() + " | " +
+                    t.getTipo() + " | " +
+                    t.getData()
             );
         }
     }
+
+    
+   public ArrayList<Transacao> getTransacoes() {
+    return transacoes;
+}
 
     public void salvarTransacoes() {
 
@@ -54,18 +59,18 @@ public class ControleFinanceiro {
 
             for (Transacao t : transacoes) {
                 writer.write(
-                    t.getId() + ";" +
-                    t.getDescricao() + ";" +
-                    t.getValor() + ";" +
-                    t.getTipo() + ";" +
-                    t.getData() + "\n"
+                        t.getId() + ";" +
+                        t.getDescricao() + ";" +
+                        t.getValor() + ";" +
+                        t.getTipo() + ";" +
+                        t.getData() + "\n"
                 );
             }
 
             writer.close();
 
         } catch (Exception e) {
-            System.out.println("Erro ao salvar arquivo");
+            System.out.println("Erro ao salvar transações");
         }
     }
 
@@ -73,12 +78,10 @@ public class ControleFinanceiro {
         return proximoId++;
     }
 
-    public void removerTransacao(int id) {
-        for (int i = 0; i < transacoes.size(); i++){
-            Transacao t = transacoes.get(i);
-
-            if(t.getId() == id){
-                transacoes.remove(i);
+    public void ocultarTransacao(int id) {
+        for (Transacao t : transacoes) {
+            if (t.getId() == id) {
+                t.setOculto(true);
                 break;
             }
         }
@@ -86,35 +89,37 @@ public class ControleFinanceiro {
 
     public void carregarTransacoes() {
 
-    try {
-        BufferedReader reader = new BufferedReader(new FileReader("transacoes.txt"));
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("transacoes.txt"));
 
-        String linha;
+            String linha;
 
-        while ((linha = reader.readLine()) != null) {
+            while ((linha = reader.readLine()) != null) {
 
-            String[] dados = linha.split(";");
+                String[] dados = linha.split(";");
 
-            int id = Integer.parseInt(dados[0]);
-            String descricao = dados[1];
-            double valor = Double.parseDouble(dados[2]);
-            TipoTransacao tipo = TipoTransacao.valueOf(dados[3]);
-            LocalDate data = LocalDate.parse(dados[4]);
+                int id = Integer.parseInt(dados[0]);
+                String descricao = dados[1];
+                double valor = Double.parseDouble(dados[2]);
+                TipoTransacao tipo = TipoTransacao.valueOf(dados[3]);
+                LocalDate data = LocalDate.parse(dados[4]);
 
-            Transacao t = new Transacao(id, descricao, valor, tipo, data);
+                Transacao t = new Transacao(id, descricao, valor, tipo, data);
 
-            transacoes.add(t);
+                transacoes.add(t);
+            }
+
+            reader.close();
+
+          
+            for (Transacao t : transacoes) {
+                if (t.getId() >= proximoId) {
+                    proximoId = t.getId() + 1;
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar transações");
         }
-
-        reader.close();
-
-    } catch (Exception e) {
-        System.out.println("Erro ao carregar transações");
     }
-    for (Transacao t : transacoes) {
-    if (t.getId() >= proximoId) {
-        proximoId = t.getId() + 1;
-    }
-}
-}
 }

@@ -35,22 +35,9 @@ public class ControleFinanceiro {
         return saldo;
     }
 
-    public void listarTransacoes() {
-        for (Transacao t : transacoes) {
-            System.out.println(
-                    t.getId() + " | " +
-                    t.getDescricao() + " | " +
-                    t.getValor() + " | " +
-                    t.getTipo() + " | " +
-                    t.getData()
-            );
-        }
+    public ArrayList<Transacao> getTransacoes() {
+        return transacoes;
     }
-
-    
-   public ArrayList<Transacao> getTransacoes() {
-    return transacoes;
-}
 
     public void salvarTransacoes() {
 
@@ -63,6 +50,7 @@ public class ControleFinanceiro {
                         t.getDescricao() + ";" +
                         t.getValor() + ";" +
                         t.getTipo() + ";" +
+                        t.isOculto() + ";" +
                         t.getData() + "\n"
                 );
             }
@@ -102,16 +90,23 @@ public class ControleFinanceiro {
                 String descricao = dados[1];
                 double valor = Double.parseDouble(dados[2]);
                 TipoTransacao tipo = TipoTransacao.valueOf(dados[3]);
-                LocalDate data = LocalDate.parse(dados[4]);
+                boolean oculto = Boolean.parseBoolean(dados[4]);
+                LocalDate data = LocalDate.parse(dados[5]);
 
-                Transacao t = new Transacao(id, descricao, valor, tipo, data);
+                Transacao t = new Transacao(
+                        id,
+                        descricao,
+                        valor,
+                        tipo,
+                        data,
+                        oculto
+                );
 
                 transacoes.add(t);
             }
 
             reader.close();
 
-          
             for (Transacao t : transacoes) {
                 if (t.getId() >= proximoId) {
                     proximoId = t.getId() + 1;

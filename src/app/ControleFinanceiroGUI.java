@@ -3,9 +3,9 @@ package app;
 import java.awt.*;
 import java.time.LocalDate;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import model.*;
 import service.ControleFinanceiro;
-import javax.swing.table.DefaultTableModel;
 
 public class ControleFinanceiroGUI extends JFrame {
 
@@ -61,12 +61,13 @@ public class ControleFinanceiroGUI extends JFrame {
         btnAdicionar.addActionListener(e -> adicionarTransacao());
         btnExcluir.addActionListener(e -> {
             int linha = tabela.getSelectedRow();
-            if (linha == -1){
+            if (linha == -1) {
                 JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada!");
                 return;
             }
             int id = (int) tabela.getValueAt(linha, 0);
             controle.ocultarTransacao(id);
+            controle.salvarTransacoes();
             atualizarLista();
         });
 
@@ -101,7 +102,8 @@ public class ControleFinanceiroGUI extends JFrame {
                     descricao,
                     valor,
                     tipo,
-                    LocalDate.now());
+                    LocalDate.now(),
+                    false);
 
             controle.adicionarTransacao(t);
             controle.salvarTransacoes();

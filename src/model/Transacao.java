@@ -9,15 +9,17 @@ public class Transacao {
     private LocalDate data;
     private boolean oculto;
 
-    public Transacao (int id, String descricao, double valor, TipoTransacao tipo, LocalDate data) {
-        this.oculto = oculto;
-        this.id = id;
-        this.descricao = descricao;
-        this.valor = valor;
-        this.tipo = tipo;
-        this.data = data;
+    public Transacao(int id, String descricao, double valor,
+                 TipoTransacao tipo, LocalDate data,
+                 boolean oculto) {
 
-   }
+    this.id = id;
+    this.descricao = descricao;
+    this.valor = valor;
+    this.tipo = tipo;
+    this.data = data;
+    this.oculto = oculto;
+}
 
    public TipoTransacao getTipo() {
     return tipo;

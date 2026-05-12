@@ -16,6 +16,7 @@ public class ControleFinanceiroGUI extends JFrame {
     private JComboBox<String> cbTipo;
     private JTable tabela;
     private DefaultTableModel modelo;
+    private JLabel lblSaldo;
 
     public ControleFinanceiroGUI() {
 
@@ -44,6 +45,8 @@ public class ControleFinanceiroGUI extends JFrame {
 
         tabela = new JTable(modelo);
 
+        lblSaldo = new JLabel("Saldo: R$ " + controle.calcularSaldo());
+
         add(new JLabel("Descrição"));
         add(txtDescricao);
 
@@ -53,25 +56,34 @@ public class ControleFinanceiroGUI extends JFrame {
         add(new JLabel("Tipo"));
         add(cbTipo);
 
+        add(lblSaldo);
+
         add(btnAdicionar);
         add(btnExcluir);
 
         add(new JScrollPane(tabela));
 
         btnAdicionar.addActionListener(e -> adicionarTransacao());
+
         btnExcluir.addActionListener(e -> {
             int linha = tabela.getSelectedRow();
+
             if (linha == -1) {
                 JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada!");
                 return;
             }
+
             int id = (int) tabela.getValueAt(linha, 0);
+
             controle.ocultarTransacao(id);
             controle.salvarTransacoes();
+
             atualizarLista();
+            atualizarSaldo();
         });
 
         atualizarLista();
+        atualizarSaldo();
 
         setVisible(true);
     }
@@ -87,6 +99,7 @@ public class ControleFinanceiroGUI extends JFrame {
             String descricao = txtDescricao.getText();
 
             double valor;
+
             try {
                 valor = Double.parseDouble(txtValor.getText());
             } catch (Exception e) {
@@ -109,6 +122,7 @@ public class ControleFinanceiroGUI extends JFrame {
             controle.salvarTransacoes();
 
             atualizarLista();
+            atualizarSaldo();
 
             txtDescricao.setText("");
             txtValor.setText("");
@@ -119,10 +133,13 @@ public class ControleFinanceiroGUI extends JFrame {
     }
 
     private void atualizarLista() {
+
         modelo.setRowCount(0);
+
         for (Transacao t : controle.getTransacoes()) {
 
             if (!t.isOculto()) {
+
                 modelo.addRow(new Object[] {
                         t.getId(),
                         t.getDescricao(),
@@ -134,4 +151,7 @@ public class ControleFinanceiroGUI extends JFrame {
         }
     }
 
+    private void atualizarSaldo() {
+        lblSaldo.setText("Saldo: R$ " + controle.calcularSaldo());
+    }
 }

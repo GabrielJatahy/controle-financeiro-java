@@ -25,10 +25,13 @@ public class ControleFinanceiro {
         double saldo = 0.0;
 
         for (Transacao t : transacoes) {
-            if (t.getTipo() == TipoTransacao.ENTRADA) {
-                saldo += t.getValor();
-            } else {
-                saldo -= t.getValor();
+            if (!t.isOculto()) {
+                if (t.getTipo() == TipoTransacao.ENTRADA) {
+                    saldo += t.getValor();
+                } else {
+                    saldo -= t.getValor();
+                }
+
             }
         }
 
@@ -47,12 +50,11 @@ public class ControleFinanceiro {
             for (Transacao t : transacoes) {
                 writer.write(
                         t.getId() + ";" +
-                        t.getDescricao() + ";" +
-                        t.getValor() + ";" +
-                        t.getTipo() + ";" +
-                        t.isOculto() + ";" +
-                        t.getData() + "\n"
-                );
+                                t.getDescricao() + ";" +
+                                t.getValor() + ";" +
+                                t.getTipo() + ";" +
+                                t.isOculto() + ";" +
+                                t.getData() + "\n");
             }
 
             writer.close();
@@ -99,8 +101,7 @@ public class ControleFinanceiro {
                         valor,
                         tipo,
                         data,
-                        oculto
-                );
+                        oculto);
 
                 transacoes.add(t);
             }

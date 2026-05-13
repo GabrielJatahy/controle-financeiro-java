@@ -18,58 +18,115 @@ public class ControleFinanceiroGUI extends JFrame {
     private DefaultTableModel modelo;
     private JLabel lblSaldo;
 
+    private int idSelecionado;
+    private boolean editando = false;
+
     public ControleFinanceiroGUI() {
 
         controle.carregarTransacoes();
 
         setTitle("Controle Financeiro");
-        setSize(500, 500);
+        setSize(600, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new FlowLayout());
+        setLocationRelativeTo(null); // centraliza tela
 
-        txtDescricao = new JTextField(20);
-        txtValor = new JTextField(10);
+       
+        setLayout(new BorderLayout(10, 10));
 
-        cbTipo = new JComboBox<>(new String[] { "ENTRADA", "SAIDA" });
+      
+        JPanel painelForm = new JPanel(new GridLayout(3, 2, 5, 5));
 
-        JButton btnAdicionar = new JButton("Adicionar");
+        txtDescricao = new JTextField();
+        txtValor = new JTextField();
+        cbTipo = new JComboBox<>(new String[]{"ENTRADA", "SAIDA"});
+
+        painelForm.setBorder(BorderFactory.createTitledBorder("Nova Transação"));
+
+        painelForm.add(new JLabel("Descrição:"));
+        painelForm.add(txtDescricao);
+
+        painelForm.add(new JLabel("Valor:"));
+        painelForm.add(txtValor);
+
+        painelForm.add(new JLabel("Tipo:"));
+        painelForm.add(cbTipo);
+
+       
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+
+        JButton btnAdicionar = new JButton("Adicionar / Salvar");
+        JButton btnEditar = new JButton("Editar");
         JButton btnExcluir = new JButton("Excluir");
 
+        painelBotoes.add(btnAdicionar);
+        painelBotoes.add(btnEditar);
+        painelBotoes.add(btnExcluir);
+
+        
         modelo = new DefaultTableModel();
 
         modelo.addColumn("ID");
-        modelo.addColumn("Descricao");
+        modelo.addColumn("Descrição");
         modelo.addColumn("Valor");
         modelo.addColumn("Tipo");
         modelo.addColumn("Data");
 
         tabela = new JTable(modelo);
+        tabela.setRowHeight(25);
+        JScrollPane scroll = new JScrollPane(tabela);
 
-        lblSaldo = new JLabel("Saldo: R$ " + controle.calcularSaldo());
+        
+        lblSaldo = new JLabel("Saldo: R$ 0.00");
+        JPanel painelSaldo = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        painelSaldo.add(lblSaldo);
 
-        add(new JLabel("Descrição"));
-        add(txtDescricao);
+        
+        add(painelForm, BorderLayout.NORTH);
+        add(scroll, BorderLayout.CENTER);
 
-        add(new JLabel("Valor"));
-        add(txtValor);
+        JPanel inferior = new JPanel(new BorderLayout());
+        inferior.add(painelBotoes, BorderLayout.CENTER);
+        inferior.add(painelSaldo, BorderLayout.SOUTH);
 
-        add(new JLabel("Tipo"));
-        add(cbTipo);
+        add(inferior, BorderLayout.SOUTH);
 
-        add(lblSaldo);
+   
 
-        add(btnAdicionar);
-        add(btnExcluir);
+        btnAdicionar.addActionListener(e -> {
 
-        add(new JScrollPane(tabela));
+            if (editando) {
 
-        btnAdicionar.addActionListener(e -> adicionarTransacao());
+                for (Transacao t : controle.getTransacoes()) {
+
+                    if (t.getId() == idSelecionado) {
+
+                        t.setDescricao(txtDescricao.getText());
+                        t.setValor(Double.parseDouble(txtValor.getText()));
+
+                        String tipoStr = cbTipo.getSelectedItem().toString();
+                        t.setTipo(TipoTransacao.valueOf(tipoStr));
+                    }
+                }
+
+                editando = false;
+
+            } else {
+                adicionarTransacao();
+            }
+
+            controle.salvarTransacoes();
+            atualizarLista();
+            atualizarSaldo();
+            limparCampos();
+        });
+
+        btnEditar.addActionListener(e -> editarTransacao());
 
         btnExcluir.addActionListener(e -> {
             int linha = tabela.getSelectedRow();
 
             if (linha == -1) {
-                JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada!");
+                JOptionPane.showMessageDialog(this, "Selecione uma linha!");
                 return;
             }
 
@@ -89,47 +146,54 @@ public class ControleFinanceiroGUI extends JFrame {
     }
 
     private void adicionarTransacao() {
-        try {
 
-            if (txtDescricao.getText().isEmpty() || txtValor.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
-                return;
-            }
-
-            String descricao = txtDescricao.getText();
-
-            double valor;
-
-            try {
-                valor = Double.parseDouble(txtValor.getText());
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Valor inválido!");
-                return;
-            }
-
-            String tipoStr = cbTipo.getSelectedItem().toString();
-            TipoTransacao tipo = TipoTransacao.valueOf(tipoStr);
-
-            Transacao t = new Transacao(
-                    controle.gerarId(),
-                    descricao,
-                    valor,
-                    tipo,
-                    LocalDate.now(),
-                    false);
-
-            controle.adicionarTransacao(t);
-            controle.salvarTransacoes();
-
-            atualizarLista();
-            atualizarSaldo();
-
-            txtDescricao.setText("");
-            txtValor.setText("");
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao adicionar transação");
+        if (txtDescricao.getText().isEmpty() || txtValor.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
+            return;
         }
+
+        double valor;
+
+        try {
+            valor = Double.parseDouble(txtValor.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Valor inválido!");
+            return;
+        }
+
+        Transacao t = new Transacao(
+                controle.gerarId(),
+                txtDescricao.getText(),
+                valor,
+                TipoTransacao.valueOf(cbTipo.getSelectedItem().toString()),
+                LocalDate.now(),
+                false
+        );
+
+        controle.adicionarTransacao(t);
+        controle.salvarTransacoes();
+
+        atualizarLista();
+        atualizarSaldo();
+        limparCampos();
+    }
+
+    private void editarTransacao() {
+
+        int linha = tabela.getSelectedRow();
+
+        if (linha == -1) {
+            JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada!");
+            return;
+        }
+
+        idSelecionado = (int) tabela.getValueAt(linha, 0);
+
+        txtDescricao.setText(tabela.getValueAt(linha, 1).toString());
+        txtValor.setText(tabela.getValueAt(linha, 2).toString());
+        cbTipo.setSelectedItem(tabela.getValueAt(linha, 3).toString());
+
+        editando = true;
     }
 
     private void atualizarLista() {
@@ -140,7 +204,7 @@ public class ControleFinanceiroGUI extends JFrame {
 
             if (!t.isOculto()) {
 
-                modelo.addRow(new Object[] {
+                modelo.addRow(new Object[]{
                         t.getId(),
                         t.getDescricao(),
                         t.getValor(),
@@ -153,5 +217,11 @@ public class ControleFinanceiroGUI extends JFrame {
 
     private void atualizarSaldo() {
         lblSaldo.setText("Saldo: R$ " + controle.calcularSaldo());
+    }
+
+    private void limparCampos() {
+        txtDescricao.setText("");
+        txtValor.setText("");
+        cbTipo.setSelectedIndex(0);
     }
 }

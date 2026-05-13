@@ -1,8 +1,9 @@
 package model;
+
 import java.time.LocalDate;
 
 public class Transacao {
-    private  int id;
+    private int id;
     private String descricao;
     private double valor;
     private TipoTransacao tipo;
@@ -10,46 +11,56 @@ public class Transacao {
     private boolean oculto;
 
     public Transacao(int id, String descricao, double valor,
-                 TipoTransacao tipo, LocalDate data,
-                 boolean oculto) {
+            TipoTransacao tipo, LocalDate data,
+            boolean oculto) {
 
-    this.id = id;
-    this.descricao = descricao;
-    this.valor = valor;
-    this.tipo = tipo;
-    this.data = data;
-    this.oculto = oculto;
-}
+        this.id = id;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.tipo = tipo;
+        this.data = data;
+        this.oculto = oculto;
+    }
 
-   public TipoTransacao getTipo() {
-    return tipo;
-   }
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
-   public double getValor() {
-    return valor;
-   } 
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    public void setTipo(TipoTransacao tipo) {
+        this.tipo = tipo;
+    }
+
+    public TipoTransacao getTipo() {
+        return tipo;
+    }
+
+    public double getValor() {
+        return valor;
+    }
 
     public int getId() {
-    return id;
-}
+        return id;
+    }
 
-public String getDescricao() {
-    return descricao;
-}
+    public String getDescricao() {
+        return descricao;
+    }
 
-public LocalDate getData() {
-    return data;
-}
+    public LocalDate getData() {
+        return data;
+    }
 
-public boolean isOculto() {
-    return oculto;
-   
-}
+    public boolean isOculto() {
+        return oculto;
 
-public void setOculto(boolean oculto) {
-    this.oculto = oculto;
-}
+    }
+
+    public void setOculto(boolean oculto) {
+        this.oculto = oculto;
+    }
 
 }
-
- 

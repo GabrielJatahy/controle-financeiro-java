@@ -1,3 +1,4 @@
+
 package app;
 
 import java.awt.*;
@@ -15,6 +16,7 @@ public class ControleFinanceiroGUI extends JFrame {
     private JTextField txtValor;
     private JComboBox<String> cbTipo;
     private JComboBox<String> cbFiltro;
+    private JComboBox<String> cbCategoria;
     private JTable tabela;
     private DefaultTableModel modelo;
     private JLabel lblSaldo;
@@ -35,29 +37,63 @@ public class ControleFinanceiroGUI extends JFrame {
 
         Font font = new Font("Segoe UI", Font.PLAIN, 14);
 
-       
-        JPanel form = new JPanel(new GridLayout(2, 4, 10, 10));
+        JPanel form = new JPanel(new GridLayout(2, 5, 10, 10));
         form.setBackground(new Color(20, 20, 20));
         form.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         txtDescricao = new JTextField();
         txtValor = new JTextField();
+
         cbTipo = new JComboBox<>(new String[] { "ENTRADA", "SAIDA" });
+
         cbFiltro = new JComboBox<>(new String[] { "TODOS", "ENTRADA", "SAIDA" });
+
+        cbCategoria = new JComboBox<>(new String[] {
+                "TRABALHO",
+                "SALARIO",
+                "VALE_ALIMENTACAO",
+                "VALE_TRANSPORTE",
+
+                "LUZ",
+                "AGUA",
+                "GAS",
+                "INTERNET",
+                "FACULDADE",
+                "CURSO",
+                "SUPERMERCADO",
+
+                "RACAO",
+                "AREIA",
+
+                "UBER",
+                "ONIBUS",
+
+                "STREAMING_APPS",
+
+                "CARTAO",
+                "PARCELAS",
+                "EMPRESTIMO",
+
+                "CINEMA",
+                "PRESENTES"
+        });
 
         styleField(txtDescricao, font);
         styleField(txtValor, font);
         styleField(cbTipo, font);
         styleField(cbFiltro, font);
+        styleField(cbCategoria, font);
 
         form.add(label("Descrição"));
         form.add(label("Valor"));
         form.add(label("Tipo"));
+        form.add(label("Categoria"));
         form.add(label("Filtro"));
 
         form.add(txtDescricao);
         form.add(txtValor);
         form.add(cbTipo);
+        form.add(cbCategoria);
         form.add(cbFiltro);
 
         JPanel botoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
@@ -72,16 +108,17 @@ public class ControleFinanceiroGUI extends JFrame {
         botoes.add(btnEdit);
         botoes.add(btnDel);
 
-       
         modelo = new DefaultTableModel();
 
         modelo.addColumn("ID");
         modelo.addColumn("Descrição");
         modelo.addColumn("Valor");
         modelo.addColumn("Tipo");
+        modelo.addColumn("Categoria");
         modelo.addColumn("Data");
 
         tabela = new JTable(modelo);
+
         tabela.setRowHeight(28);
         tabela.setFont(font);
 
@@ -94,15 +131,14 @@ public class ControleFinanceiroGUI extends JFrame {
         JScrollPane scroll = new JScrollPane(tabela);
         scroll.setBorder(BorderFactory.createEmptyBorder());
 
-     
         lblSaldo = new JLabel();
         lblSaldo.setForeground(new Color(0, 220, 0));
         lblSaldo.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblSaldo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-       
         JPanel bottom = new JPanel(new BorderLayout());
         bottom.setBackground(new Color(20, 20, 20));
+
         bottom.add(botoes, BorderLayout.CENTER);
         bottom.add(lblSaldo, BorderLayout.SOUTH);
 
@@ -110,22 +146,32 @@ public class ControleFinanceiroGUI extends JFrame {
         add(scroll, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
 
-     
         btnAdd.addActionListener(e -> {
 
             if (editando) {
 
                 for (Transacao t : controle.getTransacoes()) {
+
                     if (t.getId() == idSelecionado) {
+
                         t.setDescricao(txtDescricao.getText());
+
                         t.setValor(Double.parseDouble(txtValor.getText()));
-                        t.setTipo(TipoTransacao.valueOf(cbTipo.getSelectedItem().toString()));
+
+                        t.setTipo(
+                                TipoTransacao.valueOf(
+                                        cbTipo.getSelectedItem().toString()));
+
+                        t.setCategoria(
+                                CategoriaTransacao.valueOf(
+                                        cbCategoria.getSelectedItem().toString()));
                     }
                 }
 
                 editando = false;
 
             } else {
+
                 adicionar();
             }
 
@@ -138,43 +184,57 @@ public class ControleFinanceiroGUI extends JFrame {
         btnEdit.addActionListener(e -> editar());
 
         btnDel.addActionListener(e -> {
+
             int linha = tabela.getSelectedRow();
+
             if (linha == -1)
                 return;
 
             int id = (int) tabela.getValueAt(linha, 0);
+
             controle.ocultarTransacao(id);
 
             controle.salvarTransacoes();
+
             atualizar();
         });
 
         atualizar();
+
         setVisible(true);
     }
 
     private void adicionar() {
-        Transacao t = new Transacao(
-                controle.gerarId(),
-                txtDescricao.getText(),
-                Double.parseDouble(txtValor.getText()),
-                TipoTransacao.valueOf(cbTipo.getSelectedItem().toString()),
-                LocalDate.now(),
-                false);
+
+       
+Transacao t = new Transacao(
+        controle.gerarId(),
+        txtDescricao.getText(),
+        Double.parseDouble(txtValor.getText()),
+        TipoTransacao.valueOf(cbTipo.getSelectedItem().toString()),
+        LocalDate.now(),
+        false,
+        CategoriaTransacao.valueOf(cbCategoria.getSelectedItem().toString()));
 
         controle.adicionarTransacao(t);
     }
 
     private void editar() {
+
         int linha = tabela.getSelectedRow();
+
         if (linha == -1)
             return;
 
         idSelecionado = (int) tabela.getValueAt(linha, 0);
 
         txtDescricao.setText(tabela.getValueAt(linha, 1).toString());
+
         txtValor.setText(tabela.getValueAt(linha, 2).toString());
+
         cbTipo.setSelectedItem(tabela.getValueAt(linha, 3).toString());
+
+        cbCategoria.setSelectedItem(tabela.getValueAt(linha, 4).toString());
 
         editando = true;
     }
@@ -186,9 +246,12 @@ public class ControleFinanceiroGUI extends JFrame {
         String filtro = cbFiltro.getSelectedItem().toString();
 
         for (Transacao t : controle.getTransacoes()) {
+
             if (!t.isOculto()) {
 
-                if (!filtro.equals("TODOS") && !t.getTipo().toString().equals(filtro)) {
+                if (!filtro.equals("TODOS")
+                        && !t.getTipo().toString().equals(filtro)) {
+
                     continue;
                 }
 
@@ -197,6 +260,7 @@ public class ControleFinanceiroGUI extends JFrame {
                         t.getDescricao(),
                         t.getValor(),
                         t.getTipo(),
+                        t.getCategoria(),
                         t.getData()
                 });
             }
@@ -206,17 +270,27 @@ public class ControleFinanceiroGUI extends JFrame {
     }
 
     private JLabel label(String text) {
+
         JLabel l = new JLabel(text);
+
         l.setForeground(Color.LIGHT_GRAY);
+
         l.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
         return l;
     }
 
     private void styleField(JComponent c, Font f) {
+
         c.setFont(f);
+
         c.setForeground(Color.WHITE);
+
         c.setBackground(new Color(45, 45, 45));
-        c.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
+
+        c.setBorder(
+                BorderFactory.createLineBorder(
+                        new Color(70, 70, 70)));
     }
 
     private JButton styledButton(String text) {
@@ -224,20 +298,28 @@ public class ControleFinanceiroGUI extends JFrame {
         JButton b = new JButton(text);
 
         Color normal = new Color(55, 55, 55);
+
         Color hover = new Color(85, 85, 85);
 
         b.setBackground(normal);
+
         b.setForeground(Color.WHITE);
+
         b.setFocusPainted(false);
+
         b.setBorderPainted(false);
+
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         b.addMouseListener(new java.awt.event.MouseAdapter() {
+
             public void mouseEntered(java.awt.event.MouseEvent e) {
+
                 b.setBackground(hover);
             }
 
             public void mouseExited(java.awt.event.MouseEvent e) {
+
                 b.setBackground(normal);
             }
         });

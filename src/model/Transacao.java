@@ -9,10 +9,11 @@ public class Transacao {
     private TipoTransacao tipo;
     private LocalDate data;
     private boolean oculto;
+    private CategoriaTransacao categoria;
 
     public Transacao(int id, String descricao, double valor,
             TipoTransacao tipo, LocalDate data,
-            boolean oculto) {
+            boolean oculto, CategoriaTransacao categoria) {
 
         this.id = id;
         this.descricao = descricao;
@@ -20,6 +21,7 @@ public class Transacao {
         this.tipo = tipo;
         this.data = data;
         this.oculto = oculto;
+        this.categoria = categoria;
     }
 
     public void setDescricao(String descricao) {
@@ -61,6 +63,14 @@ public class Transacao {
 
     public void setOculto(boolean oculto) {
         this.oculto = oculto;
+    }
+
+    public CategoriaTransacao getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaTransacao categoria) {
+        this.categoria = categoria;
     }
 
 }
